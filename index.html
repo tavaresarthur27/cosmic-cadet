@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cosmic Cadet – Pinball espacial em 3D</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#070816;--pn:#12142e;--fg:#e8f0ff;--mut:#9aa6cf;--ac:#35e0ff;--mg:#ff3fa4;--am:#ffb347;--pu:#a66bff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 17px/1.55 "Chakra Petch","Trebuchet MS",system-ui,sans-serif;overflow-x:hidden;
+ background-image:radial-gradient(1px 1px at 12% 18%,#fff8,transparent),radial-gradient(1px 1px at 78% 8%,#fff6,transparent),radial-gradient(1.5px 1.5px at 40% 62%,#fff7,transparent),radial-gradient(1px 1px at 90% 48%,#fff6,transparent),radial-gradient(1px 1px at 6% 82%,#fff6,transparent);background-size:340px 340px}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+.btn{display:inline-block;background:var(--am);color:#1a1000;font:400 20px "Bungee","Arial Black",sans-serif;padding:14px 28px;border-radius:8px;text-decoration:none;box-shadow:0 5px 0 #a35f00;transition:transform .12s,box-shadow .12s}
+.btn:hover{transform:translateY(2px);box-shadow:0 3px 0 #a35f00}
+.btn:focus-visible,.ghost:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.ghost{color:var(--ac);font-weight:600;text-decoration:none;border-bottom:2px solid var(--ac);padding-bottom:2px}
+h1,h2{font-family:"Bungee","Arial Black",sans-serif;font-weight:400;margin:0;line-height:1}
+h2{font-size:clamp(28px,5vw,44px);margin-bottom:22px}
+p{margin:0 0 14px;max-width:58ch}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:center;min-height:min(92vh,760px);padding:34px 0 10px}
+.hero h1{font-size:clamp(46px,10.5vw,108px);color:var(--fg);text-shadow:0 0 28px #35e0ff66,4px 4px 0 var(--mg)}
+.hero .lead{font-size:clamp(18px,2.4vw,23px);margin:22px 0 26px;color:var(--fg)}
+.cta{display:flex;flex-wrap:wrap;gap:22px;align-items:center}
+.note{margin-top:20px;color:var(--mut);font-size:15px}
+.stage{perspective:820px;display:flex;justify-content:center;padding-bottom:10px}
+.table{width:min(330px,78vw);aspect-ratio:4/7;transform:rotateX(50deg) rotateZ(-4deg);transform-origin:50% 62%;filter:drop-shadow(0 30px 40px #35e0ff33)}
+.table svg{width:100%;height:100%;display:block}
+
+/* seções */
+section{padding:64px 0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.box{background:var(--pn);border:2px solid #263063;border-radius:16px;padding:26px}
+.box h3{margin:0 0 14px;font:600 22px "Chakra Petch",sans-serif}
+.keys{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px;align-items:center}
+kbd{display:inline-block;min-width:46px;text-align:center;padding:9px 12px;background:#0a0c22;border:2px solid var(--ac);border-bottom-width:5px;border-radius:8px;font:700 16px "Chakra Petch",sans-serif;color:var(--ac)}
+kbd.s{min-width:130px;border-color:var(--am);color:var(--am)}
+.row{margin-bottom:18px}
+.row small{display:block;color:var(--mut);font-size:15px;margin-top:2px}
+.pads{display:flex;gap:8px;margin-top:6px}
+.pads span{flex:1;text-align:center;padding:14px 6px;border:2px solid var(--ac);border-radius:12px;background:#0a0c22;font-weight:700;font-size:15px}
+.pads span.m{border-color:var(--am);flex:1.3}
+dl{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:18px 34px}
+dl div{border-left:5px solid var(--c);padding-left:16px}
+dt{font:600 20px "Chakra Petch",sans-serif}
+dd{margin:2px 0 0;color:var(--mut)}
+.pts{color:var(--c);font-weight:700}
+
+/* patentes */
+.ladder{display:grid;gap:10px;margin-top:8px}
+.rk{display:grid;grid-template-columns:130px 1fr 84px;gap:14px;align-items:center}
+.rk b{font:600 18px "Chakra Petch",sans-serif}
+.rk i{display:block;height:16px;border-radius:8px;background:linear-gradient(90deg,var(--ac),var(--mg));width:var(--w);min-width:12px;box-shadow:0 0 14px #ff3fa455}
+.rk span{text-align:right;color:var(--mut);font-variant-numeric:tabular-nums}
+.final{text-align:center;padding:70px 0 80px}
+.final h2{margin-bottom:26px}
+.final p{margin:22px auto 0;color:var(--mut)}
+footer{border-top:2px solid #1b2150;padding:22px 0 30px;color:var(--mut);font-size:15px}
+
+@media(max-width:820px){
+ .hero{grid-template-columns:1fr;min-height:0;padding-top:24px}
+ .stage{order:-1;margin-bottom:-30px}
+ .table{width:min(250px,64vw)}
+ .two,dl{grid-template-columns:1fr}
+ .rk{grid-template-columns:104px 1fr 70px;gap:10px}
+ section{padding:46px 0}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+</style>
+</head>
+<body>
+<main>
+<div class="wrap">
+  <header class="hero">
+    <div>
+      <h1>Cosmic Cadet</h1>
+      <p class="lead">Pinball espacial em 3D, inspirado nos clássicos de mesa dos anos 90. Abre no navegador, sem instalar nada e sem cadastro.</p>
+      <div class="cta">
+        <a class="btn" id="play" href="jogo.html">Jogar agora</a>
+        <a class="ghost" href="#como-jogar">Ver os controles</a>
+      </div>
+      <p class="note">Funciona em celular, tablet e computador.</p>
+    </div>
+    <div class="stage" aria-hidden="true">
+      <div class="table">
+        <svg viewBox="0 0 400 700" id="tbl">
+          <defs>
+            <linearGradient id="tf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#10124a"/><stop offset="1" stop-color="#2a0f45"/></linearGradient>
+            <filter id="gl" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <path d="M20 700V200A180 180 0 0 1 380 200V700Z" fill="url(#tf)" stroke="#35e0ff" stroke-width="7" filter="url(#gl)"/>
+          <circle cx="190" cy="430" r="60" fill="none" stroke="#35e0ff" stroke-opacity=".25" stroke-width="3"/>
+          <circle cx="190" cy="430" r="38" fill="none" stroke="#35e0ff" stroke-opacity=".25" stroke-width="3"/>
+          <path d="M358 250V690" stroke="#35e0ff" stroke-width="6" filter="url(#gl)"/>
+          <path d="M358 250H380" stroke="#65ffb4" stroke-width="4"/>
+          <g fill="#35e0ff" stroke="#d0faff" stroke-width="3" filter="url(#gl)"><circle cx="190" cy="410" r="18"><animate attributeName="cx" values="190;228;190;152;190" dur="3.93s" repeatCount="indefinite"/></circle></g>
+          <g stroke="#ffb347" stroke-width="7" stroke-linecap="round" filter="url(#gl)"><path d="M50 470L105 545"/><path d="M328 470L273 545"/></g>
+          <g stroke="#35e0ff" stroke-width="6" stroke-linecap="round"><path d="M20 570L130 630"/><path d="M358 570L250 630"/></g>
+          <g fill="#ffe45e" filter="url(#gl)"><circle cx="130" cy="80" r="9"/><circle cx="190" cy="68" r="9" fill="#2a2c4a"/><circle cx="250" cy="80" r="9"/></g>
+          <g fill="none" stroke="#a66bff" stroke-width="4" filter="url(#gl)"><circle cx="92" cy="345" r="13"/><circle cx="92" cy="345" r="6"/><circle cx="288" cy="345" r="13"/><circle cx="288" cy="345" r="6"/></g>
+          <g fill="#ff3fa4" stroke="#ffd0ea" stroke-width="4" filter="url(#gl)">
+            <circle cx="140" cy="210" r="24"><animate attributeName="r" values="24;28;24" dur="1.8s" repeatCount="indefinite"/></circle>
+            <circle cx="240" cy="210" r="24"><animate attributeName="r" values="24;28;24" dur="1.8s" begin=".6s" repeatCount="indefinite"/></circle>
+            <circle cx="190" cy="290" r="24"><animate attributeName="r" values="24;28;24" dur="1.8s" begin="1.2s" repeatCount="indefinite"/></circle>
+          </g>
+          <g stroke="#ff3fa4" stroke-width="14" stroke-linecap="round" filter="url(#gl)"><path d="M130 630L174 653"/><path d="M250 630L206 653"/></g>
+          <circle r="8" fill="#fff" filter="url(#gl)"><animateMotion dur="11s" repeatCount="indefinite" path="M369 660L369 130Q362 50 290 40L140 185L240 185L200 270L92 345L140 520L112 600L172 650L120 560L190 380L288 345L250 460L330 520L300 590L210 650L369 660"/></circle>
+        </svg>
+      </div>
+    </div>
+  </header>
+
+  <section id="como-jogar">
+    <h2>Como jogar</h2>
+    <div class="two">
+      <div class="box">
+        <h3>No computador</h3>
+        <div class="row"><div class="keys"><kbd>A</kbd><kbd>←</kbd> flipper esquerdo</div><small>Segure para erguer. Solte para baixar.</small></div>
+        <div class="row"><div class="keys"><kbd>D</kbd><kbd>→</kbd> flipper direito</div></div>
+        <div class="row"><div class="keys"><kbd class="s">Espaço</kbd><kbd>S</kbd> lançar</div><small>Segure para carregar a mola e solte para lançar. Quanto mais tempo, mais forte.</small></div>
+        <div class="row"><div class="keys"><kbd>P</kbd><kbd>Esc</kbd> pausar</div><small>Na pausa você pode salvar o jogo e continuar depois.</small></div>
+      </div>
+      <div class="box">
+        <h3>No celular e no tablet</h3>
+        <p>Três botões grandes ficam na base da tela, ao alcance dos polegares.</p>
+        <div class="pads"><span>◀ Esquerdo</span><span class="m">Lançar</span><span>Direito ▶</span></div>
+        <p style="margin-top:16px">Segure Lançar para carregar a mola e solte para mandar a bola. O celular vibra quando ela bate nos bumpers. Pausar e Salvar ficam no canto superior da mesa.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>O que tem na mesa</h2>
+    <dl>
+      <div style="--c:var(--mg)"><dt>Bumpers</dt><dd>Três cogumelos que jogam a bola de volta. <span class="pts">100 pontos</span> por batida.</dd></div>
+      <div style="--c:var(--ac)"><dt>Satélite móvel</dt><dd>Um bumper que atravessa o centro da mesa e muda o ângulo dos rebotes. Acerte para ganhar <span class="pts">200 pontos</span>.</dd></div>
+      <div style="--c:#65ffb4"><dt>Comporta de lançamento</dt><dd>Abre para a bola sair e rebate de volta para a mesa quando ela tenta retornar ao corredor.</dd></div>
+      <div style="--c:var(--pu)"><dt>Buracos de minhoca</dt><dd>A bola entra por um e sai pelo outro. <span class="pts">500 pontos</span> por viagem.</dd></div>
+      <div style="--c:#ffe45e"><dt>Luzes de rolagem</dt><dd>Passe a bola pelas três luzes do topo para ganhar <span class="pts">2.000 pontos</span> e subir o bônus até x5.</dd></div>
+      <div style="--c:var(--am)"><dt>Slingshots</dt><dd>As rampas laranja acima dos flippers impulsionam a bola para cima e para o centro. <span class="pts">10 pontos</span> por ativação.</dd></div>
+    </dl>
+  </section>
+
+  <section>
+    <h2>Suba de patente</h2>
+    <p>Quanto mais pontos, mais alta a patente. Você começa como Cadete e tem três bolas para chegar a Almirante.</p>
+    <div class="ladder">
+      <div class="rk"><b>Cadete</b><i style="--w:2%"></i><span>0</span></div>
+      <div class="rk"><b>Alferes</b><i style="--w:6%"></i><span>5.000</span></div>
+      <div class="rk"><b>Tenente</b><i style="--w:15%"></i><span>15.000</span></div>
+      <div class="rk"><b>Capitão</b><i style="--w:30%"></i><span>35.000</span></div>
+      <div class="rk"><b>Comandante</b><i style="--w:58%"></i><span>70.000</span></div>
+      <div class="rk"><b>Almirante</b><i style="--w:100%"></i><span>120.000</span></div>
+    </div>
+  </section>
+
+  <section class="final">
+    <h2>Pronto para a decolagem?</h2>
+    <a class="btn" href="jogo.html">Jogar agora</a>
+    <p>Três bolas, uma mesa e nenhuma instalação.</p>
+  </section>
+</div>
+</main>
+<footer><div class="wrap">Cosmic Cadet · feito com física própria e three.js · inspirado nos pinballs de mesa clássicos</div></footer>
+<script>
+if(matchMedia('(prefers-reduced-motion: reduce)').matches){try{document.getElementById('tbl').pauseAnimations()}catch(e){}}
+</script>
+</body>
+</html>
